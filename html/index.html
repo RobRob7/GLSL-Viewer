@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CodeMirror in Left Window</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.min.css">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      background-color: #333;
+      color: white;
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+
+    .content {
+      flex: 1;
+      display: flex;
+    }
+
+    .left-window, .right-window {
+      width: 50%;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .left-window {
+      background-color: #f0f0f0;
+      border-right: 1px solid #ccc;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #editor {
+        flex: 1;
+        border: 1px solid #999;
+      }      
+
+    .right-window {
+      background-color: #e0e0ff;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    Shader Viewer
+  </header>
+  <div class="content">
+    <div class="left-window">
+      <h2>Code Editor</h2>
+      <div id="editor"></div>
+    </div>
+    <div class="right-window">
+      <h2>Right Window</h2>
+      <p>Content for the right side goes here.</p>
+    </div>
+  </div>
+  
+  <script type="module" src="../js/main.js"></script>
+</body>
+</html>
