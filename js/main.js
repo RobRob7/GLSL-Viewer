@@ -193,6 +193,9 @@ function renderLoop() {
     // only render if shader program has been sets
     if (!shaderProgram) return;
 
+    // update canvas size if needed
+    resizeCanvas();
+
     // set viewport (rendering window settings)
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     // clear render background to white
