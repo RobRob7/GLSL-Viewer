@@ -1,0 +1,31 @@
+precision highp float;
+
+uniform float time;
+uniform vec2 resolution;
+
+void main() {
+    // Normalized pixel coordinates (from 0 to 1)
+    vec2 uv = gl_FragCoord.xy / resolution.xy;
+
+    // Center the UVs around (0,0) for better symmetry
+    uv = uv * 2.0 - 1.0;
+    uv.x *= resolution.x / resolution.y;
+
+    // Ripple effect
+    float freq = 10.0;
+    float speed = 1.0;
+    float ripple = sin((uv.x * freq) + time * speed) * 0.02;
+    ripple += sin((uv.y * freq * 1.5) - time * speed * 0.7) * 0.02;
+
+    uv += ripple;
+
+    // Color based on UV position
+    vec3 color = vec3(0.0, 0.4, 0.7); // Deep water base
+    color += 0.1 * sin(uv.xyx * 40.0 + time * 1.5); // Subtle surface shimmer
+
+    // Add light reflection shimmer
+    float shimmer = sin((uv.x + uv.y + time * 0.5) * 20.0) * 0.05;
+    color += vec3(shimmer);
+
+    gl_FragColor = vec4(color, 1.0);
+}
