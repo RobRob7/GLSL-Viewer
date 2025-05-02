@@ -1,0 +1,418 @@
+/* Complete Styles for GLSL Shader Editor */
+:root {
+    --primary-color: #646cff;
+    --primary-hover: #535bf2;
+    --border-color: #ddd;
+    --bg-color: #f5f5f5;
+    --text-color: #333;
+    --error-color: #ff4444;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color: var(--text-color);
+    background-color: #f8f9fa;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: crimson;
+}
+
+/* Auth Buttons */
+#auth-buttons {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 10px;
+}
+
+#auth-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.25s;
+}
+
+#auth-buttons button:hover {
+    background-color: var(--primary-hover);
+}
+
+#logout-btn {
+    background-color: #ff4444;
+}
+
+#logout-btn:hover {
+    background-color: #cc0000;
+}
+
+/* Main Container */
+#main-container {
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 60px);
+    margin-top: 60px;
+}
+
+/* Shader List */
+#shader-list-container {
+    width: 250px;
+    background-color: white;
+    border-right: 1px solid var(--border-color);
+    padding: 15px;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+#shader-list-container h3 {
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+#new-shader-btn {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#new-shader-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+#shader-list {
+    list-style: none;
+}
+
+#shader-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.shader-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.shader-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: #666;
+    transition: color 0.2s;
+}
+
+.shader-actions button:hover {
+    color: var(--primary-color);
+}
+
+.edit-icon::after {
+    content: '✏️';
+}
+
+.delete-icon::after {
+    content: '🗑️';
+}
+
+
+#shader-list li:hover {
+    background-color: var(--bg-color);
+}
+
+#shader-list li.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Editor Container */
+#editor-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
+
+#editor {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    border-right: 1px solid var(--border-color);
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: none;
+    outline: none;
+    tab-size: 2;
+    background-color: #fafafa;
+}
+
+#controls {
+    padding: 10px;
+    background-color: white;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+#controls button {
+    padding: 6px 12px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#controls button:hover {
+    background-color: var(--primary-hover);
+}
+
+#controls label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+/* Canvas Container */
+#canvas-container {
+    flex: 1;
+    position: relative;
+    background-color: #e9ecef;
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+#error-display {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(255, 68, 68, 0.9);
+    color: white;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 14px;
+    display: none;
+    max-height: 30%;
+    overflow-y: auto;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    position: relative;
+    left: 25%;
+    top: 25%;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+.close:hover {
+    color: #333;
+}
+
+#auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+#update-btn {
+    background-color: #4CAF50;
+    margin-right: 10px;
+}
+
+#update-btn:hover {
+    background-color: #45a049;
+}
+
+#auth-form input {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+#auth-form button {
+    padding: 10px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#auth-form button:hover {
+    background-color: var(--primary-hover);
+}
+
+/* Sidebar Collapse Styles */
+#shader-list-container {
+    width: 250px;
+    transition: width 0.3s ease;
+    overflow: hidden;
+}
+
+#shader-list-container.collapsed {
+    width: 50px;
+}
+
+#shader-list-container.collapsed .sidebar-header h3,
+#shader-list-container.collapsed #shader-list,
+#shader-list-container.collapsed #new-shader-btn {
+    display: none;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+#toggle-sidebar {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2em;
+}
+
+/* Password Toggle Styles */
+.input-with-toggle {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 5px;
+    color: #666;
+}
+
+li:hover {
+    cursor: pointer;
+}
+
+#notification {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    padding: 15px 25px;
+    color: white;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.5s ease;
+    z-index: 1000;
+}
+
+.notification-hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.notification-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Different notification types */
+.notification-success {
+    background: #4CAF50;
+}
+
+.notification-error {
+    background: #f44336;
+}
+
+.notification-info {
+    background: #2196F3;
+}
+
+/* Responsive Layout */
+@media (max-width: 768px) {
+    #main-container {
+        flex-direction: column;
+    }
+
+    #shader-list-container {
+        width: 100%;
+        height: 200px;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    #editor-container {
+        flex-direction: row;
+    }
+
+    #editor {
+        min-height: 200px;
+    }
+
+    #canvas-container {
+        min-height: 300px;
+    }
+}

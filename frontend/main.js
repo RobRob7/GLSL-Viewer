@@ -323,7 +323,7 @@ document.getElementById('update-btn').addEventListener('click', updateShader);
 // Updated update function
 async function updateShader() {
     if (!currentShaderId) {
-        alert('No shader selected');
+        showNotification('No shader Selected', 'error');
         return;
     }
 
@@ -339,14 +339,14 @@ async function updateShader() {
             })
         });
 
-        if (!response.ok) throw new Error('Failed to save shader');
+        if (!response.ok) showNotification('Failed to save shader', 'error');
 
         const updatedShader = await response.json();
         console.log('Shader updated:', updatedShader);
-        alert('Shader saved successfully!');
+        showNotification('shader saved successfully!', 'success');
     } catch (err) {
         console.error('Error saving shader:', err);
-        alert('Failed to save shader');
+        showNotification('Failed to save shader', 'error');
     }
 }
 
@@ -439,11 +439,11 @@ async function handleRegister(e) {
             authModal.style.display = 'none';
             authForm.reset();
         } else {
-            alert(data.message || 'Registration failed');
+            showNotification(data.message || 'Registration failed', 'error');
         }
     } catch (err) {
         console.error('Registration error:', err);
-        alert('Registration failed');
+        showNotification('Registration failed', 'error');
     }
 }
 
@@ -485,35 +485,37 @@ function renderShaderList(shaders) {
     shaderList.innerHTML = '';
     shaders.forEach(shader => {
         const li = document.createElement('li');
-
+        li.dataset.id = shader._id;
         // Shader title (editable span)
         const titleSpan = document.createElement('span');
         titleSpan.textContent = shader.title;
         titleSpan.contentEditable = false;
         titleSpan.className = 'shader-title';
 
-        // Action buttons container
+        // Action Buttons
         const actionsDiv = document.createElement('div');
         actionsDiv.className = 'shader-actions';
 
-        // Edit button
+        // Edit Button
         const editBtn = document.createElement('button');
-        editBtn.className = 'edit-icon';
-        editBtn.title = 'Edit shader name';
-        editBtn.addEventListener('click', () => toggleEditShader(shader._id, titleSpan));
+        editBtn.innerHTML = '<i class="fas fa-pencil-alt"></i>';
+        editBtn.title = 'Edit';
+        editBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleEditShader(shader._id, titleSpan);
+        });
 
-        // Delete button
+        // Delete Button
         const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'delete-icon';
-        deleteBtn.title = 'Delete shader';
-        deleteBtn.addEventListener('click', () => deleteShader(shader._id));
+        deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+        deleteBtn.title = 'Delete';
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            deleteShader(shader._id);
+        });
 
-        actionsDiv.appendChild(editBtn);
-        actionsDiv.appendChild(deleteBtn);
-
-        li.appendChild(titleSpan);
-        li.appendChild(actionsDiv);
-
+        actionsDiv.append(editBtn, deleteBtn);
+        li.append(titleSpan, actionsDiv);
         // Click handler to load shader
         li.addEventListener('click', (e) => {
             if (!e.target.classList.contains('edit-icon') &&
@@ -522,7 +524,6 @@ function renderShaderList(shaders) {
                 loadShader(shader._id);
             }
         });
-
         shaderList.appendChild(li);
     });
 }
@@ -559,17 +560,20 @@ async function createNewShader() {
             },
             body: JSON.stringify({
                 title,
-                code: editor.value || DEFAULT_SHADER_CODE
+                code: editor.value || DEFAULT_SHADER
             })
         });
 
         if (response.ok) {
             const shader = await response.json();
+            showNotification('Shader created successfully!');
             loadUserShaders();
             loadShader(shader._id);
+        } else {
+            showNotification('Failed to create shader', 'error');
         }
     } catch (err) {
-        console.error('Error creating shader:', err);
+        showNotification('Failed to create shader', 'error');
     }
 }
 
@@ -618,7 +622,12 @@ async function saveCurrentShader() {
 async function toggleEditShader(shaderId, titleElement) {
     if (titleElement.contentEditable === 'true') {
         titleElement.contentEditable = 'false';
-        await updateShaderName(shaderId, titleElement.textContent);
+        try {
+            await updateShaderName(shaderId, titleElement.textContent);
+            showNotification('Shader renamed successfully!');
+        } catch (error) {
+            showNotification('Failed to rename shader', 'error');
+        }
     } else {
         titleElement.contentEditable = 'true';
         titleElement.focus();
@@ -637,10 +646,10 @@ async function updateShaderName(shaderId, newName) {
             body: JSON.stringify({ title: newName })
         });
 
-        if (!response.ok) throw new Error('Failed to update shader name');
+        if (!response.ok) showNotification('Failed to update shader name', 'error');
     } catch (err) {
         console.error('Error updating shader name:', err);
-        alert('Failed to update shader name');
+        showNotification('Failed to update shader name', 'error');
     }
 }
 
@@ -651,23 +660,62 @@ async function deleteShader(shaderId) {
     try {
         const response = await fetch(`/api/shaders/${shaderId}`, {
             method: 'DELETE',
-            headers: {
-                'x-auth-token': authToken
-            }
+            headers: { 'x-auth-token': authToken }
         });
 
-        if (!response.ok) throw new Error('Failed to delete shader');
-
-        // Reload shader list
-        loadUserShaders();
-
-        // Clear editor if deleted shader was currently open
-        if (currentShaderId === shaderId) {
-            currentShaderId = null;
-            editor.value = '';
+        if (response.ok) {
+            showNotification('Shader deleted successfully!');
+            loadUserShaders();
+            if (currentShaderId === shaderId) {
+                currentShaderId = null;
+                editor.value = '';
+                if (shaderList.children.length > 0) {
+                    await loadShader(shaderList.children[0].dataset.id);
+                }
+            }
+        } else {
+            showNotification('Failed to delete shader', 'error');
         }
     } catch (err) {
-        console.error('Error deleting shader:', err);
-        alert('Failed to delete shader');
+        showNotification('Failed to delete shader', 'error');
     }
 }
+
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    const messageEl = document.getElementById('notification-message');
+
+    // Set message and style
+    messageEl.textContent = message;
+    notification.className = `notification-visible notification-${type}`;
+
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        notification.classList.replace('notification-visible', 'notification-hidden');
+    }, 5000);
+}
+// Sidebar Toggle
+document.getElementById('toggle-sidebar').addEventListener('click', () => {
+    const sidebar = document.getElementById('shader-list-container');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+
+    sidebar.classList.toggle('collapsed');
+    toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
+});
+
+// Password Visibility Toggle
+// Update password toggle logic
+document.querySelectorAll('.toggle-password').forEach(button => {
+    button.addEventListener('click', (e) => {
+        const icon = e.target.querySelector('i') || e.target;
+        const input = e.target.closest('.input-with-toggle').querySelector('input');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    });
+});
