@@ -560,7 +560,7 @@ async function createNewShader() {
             },
             body: JSON.stringify({
                 title,
-                code: editor.value || DEFAULT_SHADER
+                code: editor.value || DEFAULT_SHADER_CODE
             })
         });
 
