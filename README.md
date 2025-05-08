@@ -13,3 +13,8 @@ A web-based application for creating and testing fragment shaders using WebGL + 
 - Direct browser to "http://localhost:8000/"
 - Experience GLSL-Viewer
 
+
+### Features
+- Interactive GLSL code editor w/time, resolution uniforms to write fragment shaders
+- Rendering window to display fragment shader
+- Profile system: register or log in to save/load shaders
