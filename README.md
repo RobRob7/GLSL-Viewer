@@ -7,7 +7,7 @@ A web-based application for creating and testing fragment shaders using WebGL + 
 
 ### To Build + Run:
 - Download latest release content (https://github.com/RobRob7/GLSL-Viewer/releases)
-- Navigate to "../GLSL-Viewer-main/GLSL-Viewer-main/"
+- Navigate to "../GLSL-Viewer-X.X/GLSL-Viewer-X.X/"
 - In terminal run "npm i"
 - In terminal run "npm run dev"
 - Direct browser to "http://localhost:8000/"
