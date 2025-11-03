@@ -1,5 +1,5 @@
 # GLSL-Viewer
-A web-based application for creating and testing fragment shaders using WebGL + GLSL.
+A lightweight web-based application that lets you write, edit, and visualize GLSL fragment shaders in real time. Built with JavaScript and WebGL, this tool provides an interactive shader editor with instant preview, syntax highlighting, and error feedback. This tool is perfect for experimenting with shader effects or learning GLSL basics.
 
 ### Requirements:
 - WebGL compatible browser
