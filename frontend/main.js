@@ -115,17 +115,21 @@ runBtn.addEventListener('click', () => {
 });
 // reset button listener
 resetBtn.addEventListener('click', async () => {
-    // get default shader contents, load
-    await fetch('shaders/defaultGLSL.txt')
-        .then(response => response.text())
-        .then(data => {
-            editor.value = data;
-        })
-        .catch(error => {
-            editor.value = 'Error loading file: ' + error;
-        });
-    // compile shader and run
-    compileShader(editor.value);
+    const confirmReset = confirm("Are you sure you want to reset shader to default? This action cannot be undone.");
+    if (confirmReset)
+    {
+        // get default shader contents, load
+        await fetch('shaders/defaultGLSL.txt')
+            .then(response => response.text())
+            .then(data => {
+                editor.value = data;
+            })
+            .catch(error => {
+                editor.value = 'Error loading file: ' + error;
+            });
+        // compile shader and run
+        compileShader(editor.value);
+    }
 });
 
 // code editor listener for input
